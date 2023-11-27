@@ -1,0 +1,93 @@
+from cmu_graphics import *
+from PIL import Image 
+import os, pathlib
+import random
+
+class Bee:
+    @staticmethod
+    def distance(x0, y0, x1, y1):
+        return ((x1 - x0)**2 + (y1 - y0)**2)**0.5
+    
+    def __init__(Self):
+        Self.x = 200
+        Self.y = 200
+        Self.mouseX = 200
+        Self.mouseY = 200
+        Self.heldFlowers = []
+
+    def drawPlayer(Self):
+        Self.beeRadius = 20
+        Self.color = 'black'
+    
+    def playerOnStep(Self):
+        if Self.mouseX > Self.x :
+            Self.x += 2
+        else:
+            Self.x -= 2
+        if Self.mouseY > Self.y:
+            Self.y += 2
+        else:
+            Self.y -= 2
+
+    def gatherPollen(Self, other):
+        if other.isinstance(Flower) and other.pollinator == True:
+            if Bee.distance(Self.x, Self.y, other.x, other.y) < 20:
+                Self.heldFlowers.append(other)
+                print(1)
+                other.gathered = True
+                
+
+class Flower:
+    flowerList = []
+    numflowers = 0
+    def __init__(Self, pollinator):
+        Self.x = random.randint(50, 350)
+        Self.y = 388
+        Self.pollinator = pollinator
+        Self.color = 'black'
+        if Self.pollinator == True:
+            Self.gathered = False
+
+    def drawFlower(Self):
+        Self.radius = 12
+
+    def addFlower():
+        pollinator = random.randint(0,1)
+        if pollinator == 1:
+            name = Flower(True)
+            Flower.flowerList.append(name)
+        else:
+            name = Flower(False)
+            Flower.flowerList.append(name)
+            
+
+def onAppStart(app):
+    app.playerBee = Bee()
+    app.playerBee.drawPlayer()
+    app.flowerInventoryX = 10
+    Flower.addFlower()
+    Flower.addFlower()
+    Flower.addFlower()
+
+
+def redrawAll(app):
+    drawCircle(app.playerBee.x, app.playerBee.y, app.playerBee.beeRadius, fill= app.playerBee.color)
+    for flower in Flower.flowerList:
+        flower.drawFlower()
+        drawCircle(flower.x, flower.y, flower.radius, fill=flower.color)
+    for flower in app.playerBee.heldFlowers:
+        drawCircle(app.flowerInventoryX, 390, 10, fill=flower.color)
+        app.flowerInventoryX += 10
+
+def onMouseMove(app, mouseX, mouseY):
+    app.playerBee.mouseX = mouseX
+    app.playerBee.mouseY = mouseY
+
+def onStep(app):
+    app.playerBee.playerOnStep()
+
+def main():
+    runApp()
+
+if __name__ == '__main__':
+    main()  
